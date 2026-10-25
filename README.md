@@ -12,11 +12,10 @@ See [content/EDITORIAL.md](content/EDITORIAL.md).
 
 ## Setup
 
-Pinned SDK: **Flutter 3.47.8 stable / Dart 3.13.7**. The machine's existing Flutter
-3.44.9 checkout had local changes and was preserved. A separate stable SDK was
-installed at `C:\Users\Administrator\.codex\tools\flutter-wortly`.
+Pinned SDK: **Flutter 3.47.8 stable / Dart 3.13.7**.
 
-`tool/flutter.ps1` selects that installation when present, then falls back to
+`tool/flutter.ps1` selects an SDK at `%USERPROFILE%\.codex\tools\flutter-wortly`
+when present, then falls back to
 Flutter on PATH. Override with `WORTLY_FLUTTER` set to an SDK root. On another
 machine, install the pinned SDK from the [Flutter archive](https://docs.flutter.dev/install/archive).
 Android requires a supported JDK, Android SDK/build tools and accepted SDK
@@ -121,10 +120,8 @@ Equivalence keys require human review: string uniqueness cannot establish that
 two answers are semantically distinct. The typed model supports later translation
 languages; English is the sole launch language.
 
-A generated Windows scaffold is included but Windows is not a release target.
-It requires Visual Studio C++ tools, which are absent on this machine.
-The local Android setup includes a `Wortly_API35` Pixel 7 emulator, available via
-`flutter emulators --launch Wortly_API35` when it is stopped.
+Android and iOS are the supported platform targets. Use `flutter emulators`
+to list your locally configured Android emulators.
 
 ## Checks
 
