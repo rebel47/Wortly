@@ -13,13 +13,24 @@ import 'ui/quiz.dart';
 import 'ui/settings.dart';
 import 'ui/today.dart';
 
-class WortlyApp extends StatelessWidget {
+class WortlyApp extends ConsumerWidget {
   const WortlyApp({super.key});
   @override
-  Widget build(BuildContext context) => MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) => MaterialApp(
     title: 'Wortly',
     debugShowCheckedModeBanner: false,
     theme: wortlyTheme(),
+    darkTheme: wortlyTheme(brightness: Brightness.dark),
+    themeMode: switch (ref
+        .watch(appProvider)
+        .asData
+        ?.value
+        .preferences
+        .themeMode) {
+      AppThemeMode.light => ThemeMode.light,
+      AppThemeMode.dark => ThemeMode.dark,
+      _ => ThemeMode.system,
+    },
     home: const _AppRoot(),
   );
 }
@@ -144,8 +155,10 @@ class _AppRootState extends ConsumerState<_AppRoot>
               ),
             ),
             bottomNavigationBar: Container(
-              decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: line)),
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: context.colors.outlineVariant),
+                ),
               ),
               child: NavigationBar(
                 selectedIndex: destination,

@@ -25,31 +25,34 @@ class ProgressScreen extends ConsumerWidget {
           style: Theme.of(context).textTheme.displaySmall,
         ),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'Every small step leaves a mark.',
-          style: TextStyle(fontSize: 16, color: muted),
+          style: TextStyle(
+            fontSize: 16,
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 28),
         Panel(
-          color: forest,
+          color: context.colors.primary,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Eyebrow('Words in your world', color: Color(0xFFD5DFC8)),
+              Eyebrow('Words in your world', color: context.colors.onPrimary),
               const SizedBox(height: 16),
               Text(
                 '${data.learned.length}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Fraunces',
                   fontSize: 56,
-                  color: paper,
+                  color: context.colors.onPrimary,
                   height: 1.1,
                 ),
               ),
               const SizedBox(height: 10),
               Text(
                 'of $total words learned',
-                style: const TextStyle(color: Color(0xFFE2E9D9)),
+                style: TextStyle(color: context.colors.onPrimary),
               ),
               const SizedBox(height: 20),
               ClipRRect(
@@ -57,8 +60,10 @@ class ProgressScreen extends ConsumerWidget {
                 child: LinearProgressIndicator(
                   value: total == 0 ? 0 : data.learned.length / total,
                   minHeight: 6,
-                  color: const Color(0xFFCADBB2),
-                  backgroundColor: const Color(0xFF466754),
+                  color: context.colors.onPrimary,
+                  backgroundColor: context.colors.onPrimary.withValues(
+                    alpha: 0.2,
+                  ),
                   semanticsLabel: 'Curriculum progress',
                 ),
               ),
@@ -94,15 +99,21 @@ class ProgressScreen extends ConsumerWidget {
         const Eyebrow('Your weekly reflections'),
         const SizedBox(height: 14),
         if (data.scores.isEmpty)
-          const Panel(
+          Panel(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.auto_awesome_outlined, color: forest),
+                Icon(
+                  Icons.auto_awesome_outlined,
+                  color: context.colors.primary,
+                ),
                 SizedBox(height: 12),
                 Text(
                   'Your story is just beginning.',
-                  style: TextStyle(fontWeight: FontWeight.w600, color: ink),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.onSurface,
+                  ),
                 ),
                 SizedBox(height: 6),
                 Text('Complete a Sunday test to see your results here.'),
@@ -117,9 +128,9 @@ class ProgressScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(18),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.assignment_turned_in_outlined,
-                      color: forest,
+                      color: context.colors.primary,
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -128,9 +139,9 @@ class ProgressScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'Week of ${DateFormat('d MMM y').format(DateTime(score.week.year, score.week.month, score.week.day))}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: ink,
+                              color: context.colors.onSurface,
                             ),
                           ),
                           Text(
@@ -142,10 +153,10 @@ class ProgressScreen extends ConsumerWidget {
                     ),
                     Text(
                       '${score.score}/${score.questions.length}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Fraunces',
                         fontSize: 23,
-                        color: forest,
+                        color: context.colors.primary,
                       ),
                     ),
                   ],
@@ -168,7 +179,7 @@ class _Stat extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: amber, size: 24),
+        Icon(icon, color: context.colors.tertiary, size: 24),
         const SizedBox(height: 16),
         Wrap(
           crossAxisAlignment: WrapCrossAlignment.end,
@@ -176,10 +187,10 @@ class _Stat extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Fraunces',
                 fontSize: 34,
-                color: forest,
+                color: context.colors.primary,
               ),
             ),
             const Padding(
@@ -217,7 +228,10 @@ class ActivityCalendar extends StatelessWidget {
                   child: Center(
                     child: Text(
                       day,
-                      style: const TextStyle(fontSize: 11, color: muted),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 ),
@@ -241,15 +255,18 @@ class ActivityCalendar extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 12),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.circle, color: forest, size: 9),
+              Icon(Icons.circle, color: context.colors.primary, size: 9),
               SizedBox(width: 7),
               Flexible(
                 child: Text(
                   'Daily goal completed · last 5 weeks',
-                  style: TextStyle(fontSize: 11, color: muted),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ),
             ],
@@ -289,12 +306,14 @@ class _CalendarDay extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 6),
           decoration: BoxDecoration(
             color: done
-                ? forest
+                ? context.colors.primary
                 : future
-                ? paper
-                : sage,
+                ? context.colors.surface
+                : context.colors.surfaceContainerHigh,
             border: Border.all(
-              color: date == today ? forest : Colors.transparent,
+              color: date == today
+                  ? context.colors.primary
+                  : Colors.transparent,
             ),
             borderRadius: BorderRadius.circular(8),
           ),
@@ -304,10 +323,10 @@ class _CalendarDay extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 color: done
-                    ? paper
+                    ? context.colors.onPrimary
                     : future
-                    ? const Color(0xFF949C90)
-                    : muted,
+                    ? context.colors.onSurfaceVariant.withValues(alpha: 0.7)
+                    : context.colors.onSurfaceVariant,
               ),
             ),
           ),

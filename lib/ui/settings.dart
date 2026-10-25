@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_controller.dart';
+import '../domain/models.dart';
 import '../theme.dart';
 import 'common.dart';
 
@@ -13,6 +14,20 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool busy = false;
+  bool savingTheme = false;
+
+  Future<void> _theme(AppThemeMode? mode) async {
+    if (mode == null) return;
+    setState(() => savingTheme = true);
+    try {
+      await ref.read(appProvider.notifier).setThemeMode(mode);
+    } catch (_) {
+      if (mounted) showMessage(context, 'Couldn’t save your theme. Try again.');
+    } finally {
+      if (mounted) setState(() => savingTheme = false);
+    }
+  }
+
   Future<void> _reminder(bool enabled, int hour, int minute) async {
     setState(() => busy = true);
     try {
@@ -58,6 +73,32 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 10),
                     const Text('A small habit, on your terms.'),
                     const SizedBox(height: 32),
+                    const Eyebrow('Appearance'),
+                    const SizedBox(height: 14),
+                    DropdownButtonFormField<AppThemeMode>(
+                      key: ValueKey(p.themeMode),
+                      initialValue: p.themeMode,
+                      decoration: const InputDecoration(
+                        labelText: 'Theme',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: AppThemeMode.system,
+                          child: Text('System'),
+                        ),
+                        DropdownMenuItem(
+                          value: AppThemeMode.light,
+                          child: Text('Light'),
+                        ),
+                        DropdownMenuItem(
+                          value: AppThemeMode.dark,
+                          child: Text('Dark'),
+                        ),
+                      ],
+                      onChanged: savingTheme ? null : _theme,
+                    ),
+                    const SizedBox(height: 30),
                     const Eyebrow('Daily goal'),
                     const SizedBox(height: 14),
                     GoalPicker(
@@ -83,22 +124,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 30),
                     const Eyebrow('Translation language'),
                     const SizedBox(height: 14),
-                    const Panel(
+                    Panel(
                       padding: EdgeInsets.all(18),
                       child: Row(
                         children: [
-                          Icon(Icons.translate, color: forest),
+                          Icon(Icons.translate, color: context.colors.primary),
                           SizedBox(width: 14),
                           Expanded(
                             child: Text(
                               'English',
                               style: TextStyle(
-                                color: ink,
+                                color: context.colors.onSurface,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
-                          Icon(Icons.check_circle_outline, color: forest),
+                          Icon(
+                            Icons.check_circle_outline,
+                            color: context.colors.primary,
+                          ),
                         ],
                       ),
                     ),
@@ -145,9 +189,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   hour: p.reminderHour,
                                   minute: p.reminderMinute,
                                 ).format(context),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  color: forest,
+                                  color: context.colors.primary,
                                 ),
                               ),
                               onTap: busy
@@ -174,18 +218,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    const Panel(
-                      color: sage,
+                    Panel(
+                      color: context.colors.surfaceContainerHigh,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.spa_outlined, color: forest),
+                          Icon(
+                            Icons.spa_outlined,
+                            color: context.colors.primary,
+                          ),
                           SizedBox(height: 14),
                           Text(
                             'A space that’s yours.',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: ink,
+                              color: context.colors.onSurface,
                             ),
                           ),
                           SizedBox(height: 8),
@@ -198,10 +245,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 28),
                     const Center(child: Brand()),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Version 0.1.0 · Made for a little daily growth.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 11, color: muted),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),

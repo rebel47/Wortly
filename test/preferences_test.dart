@@ -1,10 +1,43 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wortly/app_controller.dart';
+import 'package:wortly/domain/models.dart';
 
 import 'support.dart';
 
 void main() {
+  test('theme survives preference changes and a database reopen', () async {
+    final dir = await Directory.systemTemp.createTemp('wortly-theme-');
+    addTearDown(() => dir.delete(recursive: true));
+    final file = File('${dir.path}/preferences.sqlite');
+    final h = Harness(file: file);
+    final container = ProviderContainer(
+      overrides: [servicesProvider.overrideWithValue(h.services())],
+    );
+    await container.read(appProvider.future);
+    final controller = container.read(appProvider.notifier);
+    expect((await h.preferences.read()).themeMode, AppThemeMode.system);
+    await controller.setThemeMode(AppThemeMode.dark);
+    await controller.onboard(3);
+    await controller.setGoal(5);
+    await controller.setReminder(true, 8, 30);
+    expect((await h.preferences.read()).themeMode, AppThemeMode.dark);
+    container.dispose();
+    await h.db.close();
+
+    final reopened = Harness(file: file);
+    addTearDown(reopened.db.close);
+    final p = await reopened.preferences.read();
+    expect(p.themeMode, AppThemeMode.dark);
+    expect(p.dailyGoal, 5);
+    expect(p.onboarded, isTrue);
+    expect(p.reminders, isTrue);
+    expect(p.reminderHour, 8);
+    expect(p.reminderMinute, 30);
+    expect((await reopened.learning.ensureToday()).goal, 3);
+  });
   test(
     'goal change at midnight snapshots the old goal for today first',
     () async {

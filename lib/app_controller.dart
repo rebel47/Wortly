@@ -114,8 +114,9 @@ class AppController extends AsyncNotifier<AppSnapshot> {
   }
 
   Future<void> onboard(int goal) async {
+    final p = await services.preferences.read();
     await services.preferences.save(
-      UserPreferences(dailyGoal: goal, onboarded: true),
+      p.copyWith(dailyGoal: goal, onboarded: true),
     );
     await refresh();
   }
@@ -131,23 +132,13 @@ class AppController extends AsyncNotifier<AppSnapshot> {
     // Snapshot the current date before changing preferences, including a
     // midnight rollover while Settings is already open.
     if (p.onboarded) await services.learning.ensureToday();
-    await services.preferences.save(
-      UserPreferences(
-        dailyGoal: goal,
-        onboarded: p.onboarded,
-        reminders: p.reminders,
-        reminderHour: p.reminderHour,
-        reminderMinute: p.reminderMinute,
-      ),
-    );
+    await services.preferences.save(p.copyWith(dailyGoal: goal));
     await refresh();
   }
 
   Future<bool> setReminder(bool enabled, int hour, int minute) async {
     final old = await services.preferences.read();
-    final next = UserPreferences(
-      dailyGoal: old.dailyGoal,
-      onboarded: old.onboarded,
+    final next = old.copyWith(
       reminders: enabled,
       reminderHour: hour,
       reminderMinute: minute,
@@ -160,6 +151,12 @@ class AppController extends AsyncNotifier<AppSnapshot> {
     await services.preferences.save(next);
     await refresh();
     return true;
+  }
+
+  Future<void> setThemeMode(AppThemeMode mode) async {
+    final p = await services.preferences.read();
+    await services.preferences.save(p.copyWith(themeMode: mode));
+    await refresh();
   }
 
   Future<void> startQuiz() async {

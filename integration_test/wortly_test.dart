@@ -47,6 +47,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Let’s begin'));
       await tester.pumpAndSettle();
+      await tester.tap(find.text("Learn today's word"));
+      await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('I’ve learned this word').first);
       await tester.pumpAndSettle();
       await tester.tap(find.text('I’ve learned this word').first);

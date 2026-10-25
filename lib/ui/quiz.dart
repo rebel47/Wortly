@@ -28,9 +28,12 @@ class QuizScreen extends ConsumerWidget {
           style: Theme.of(context).textTheme.displaySmall,
         ),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'See how much has stayed with you.',
-          style: TextStyle(fontSize: 16, color: muted),
+          style: TextStyle(
+            fontSize: 16,
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 28),
         if (finished)
@@ -82,10 +85,13 @@ class QuizScreen extends ConsumerWidget {
           _Question(session: quiz),
         if (sunday && !finished) ...[
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'Available until the end of today. Your place is saved as you go.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: muted),
+            style: TextStyle(
+              fontSize: 12,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ],
       ],
@@ -96,7 +102,7 @@ class QuizScreen extends ConsumerWidget {
 class _QuizNotes extends StatelessWidget {
   const _QuizNotes();
   @override
-  Widget build(BuildContext context) => const Panel(
+  Widget build(BuildContext context) => Panel(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -104,14 +110,20 @@ class _QuizNotes extends StatelessWidget {
         SizedBox(height: 16),
         Text(
           'German ↔ English',
-          style: TextStyle(fontWeight: FontWeight.w600, color: ink),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: context.colors.onSurface,
+          ),
         ),
         SizedBox(height: 6),
         Text('Two directions. Four choices. One word at a time.'),
         SizedBox(height: 18),
         Text(
           'Learning over perfection',
-          style: TextStyle(fontWeight: FontWeight.w600, color: ink),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: context.colors.onSurface,
+          ),
         ),
         SizedBox(height: 6),
         Text(
@@ -140,7 +152,7 @@ class _Question extends ConsumerWidget {
                 'Question ${session.cursor + 1} of ${session.questions.length}',
               ),
             ),
-            const Icon(Icons.spa_outlined, color: forest, size: 21),
+            Icon(Icons.spa_outlined, color: context.colors.primary, size: 21),
           ],
         ),
         const SizedBox(height: 12),
@@ -149,14 +161,14 @@ class _Question extends ConsumerWidget {
           child: LinearProgressIndicator(
             value: session.cursor / session.questions.length,
             minHeight: 5,
-            backgroundColor: line,
-            color: forest,
+            backgroundColor: context.colors.outlineVariant,
+            color: context.colors.primary,
             semanticsLabel: 'Weekly test progress',
           ),
         ),
         const SizedBox(height: 24),
         Panel(
-          color: sage,
+          color: context.colors.surfaceContainerHigh,
           child: Column(
             children: [
               Eyebrow(
@@ -207,7 +219,9 @@ class _Question extends ConsumerWidget {
           Semantics(
             liveRegion: true,
             child: Panel(
-              color: correct ? sage : const Color(0xFFF8EBDF),
+              color: correct
+                  ? context.colors.surfaceContainerHigh
+                  : context.colors.tertiaryContainer,
               padding: const EdgeInsets.all(18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,15 +230,15 @@ class _Question extends ConsumerWidget {
                     correct
                         ? 'That’s right. Schön gemacht!'
                         : 'A little more practice, a little more progress.',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: ink,
+                      color: context.colors.onSurface,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Correct answer: ${q.choices[q.correctIndex]}',
-                    style: const TextStyle(color: ink),
+                    style: TextStyle(color: context.colors.onSurface),
                   ),
                 ],
               ),
@@ -272,18 +286,18 @@ class _Choice extends StatelessWidget {
             : ''}',
     child: Material(
       color: revealed && isCorrect
-          ? sage
+          ? context.colors.surfaceContainerHigh
           : selected
-          ? const Color(0xFFF8EBDF)
-          : Colors.white,
+          ? context.colors.tertiaryContainer
+          : context.colors.surfaceContainerLow,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
           color: revealed && isCorrect
-              ? forest
+              ? context.colors.primary
               : selected
-              ? amber
-              : line,
+              ? context.colors.tertiary
+              : context.colors.outlineVariant,
         ),
       ),
       child: InkWell(
@@ -296,23 +310,33 @@ class _Choice extends StatelessWidget {
               children: [
                 Text(
                   String.fromCharCode(65 + index),
-                  style: const TextStyle(fontSize: 12, color: muted),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     label,
-                    style: const TextStyle(fontSize: 16, color: ink),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: context.colors.onSurface,
+                    ),
                   ),
                 ),
                 if (revealed && isCorrect)
-                  const Icon(
+                  Icon(
                     Icons.check_circle_outline,
-                    color: forest,
+                    color: context.colors.primary,
                     size: 22,
                   )
                 else if (selected)
-                  const Icon(Icons.close_rounded, color: amber, size: 22),
+                  Icon(
+                    Icons.close_rounded,
+                    color: context.colors.tertiary,
+                    size: 22,
+                  ),
               ],
             ),
           ),
@@ -330,13 +354,13 @@ class _Score extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Panel(
-        color: sage,
+        color: context.colors.surfaceContainerHigh,
         child: Column(
           children: [
-            const Icon(
+            Icon(
               Icons.workspace_premium_outlined,
               size: 48,
-              color: forest,
+              color: context.colors.primary,
             ),
             const SizedBox(height: 18),
             const Eyebrow('Week complete'),
@@ -378,8 +402,8 @@ class _Score extends StatelessWidget {
                       ? Icons.check_circle_outline
                       : Icons.refresh_rounded,
                   color: session.answers[i] == session.questions[i].correctIndex
-                      ? forest
-                      : amber,
+                      ? context.colors.primary
+                      : context.colors.tertiary,
                   size: 20,
                 ),
                 const SizedBox(width: 14),
@@ -389,9 +413,9 @@ class _Score extends StatelessWidget {
                     children: [
                       Text(
                         session.questions[i].prompt,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          color: ink,
+                          color: context.colors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 4),

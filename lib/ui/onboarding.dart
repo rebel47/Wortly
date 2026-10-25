@@ -33,9 +33,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 style: Theme.of(context).textTheme.displaySmall,
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Make German part of your day. A few useful words, a quiet moment, and a habit that grows with you.',
-                style: TextStyle(fontSize: 16, height: 1.6, color: muted),
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.6,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 28),
               const Text(
@@ -48,11 +52,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 onChanged: (v) => setState(() => goal = v),
               ),
               const SizedBox(height: 20),
-              const Panel(
+              Panel(
                 padding: EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Icon(Icons.translate_rounded, color: forest),
+                    Icon(
+                      Icons.translate_rounded,
+                      color: context.colors.primary,
+                    ),
                     SizedBox(width: 14),
                     Expanded(
                       child: Column(
@@ -62,14 +69,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             'Learning German',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: ink,
+                              color: context.colors.onSurface,
                             ),
                           ),
                           Text('With English translations'),
                         ],
                       ),
                     ),
-                    Icon(Icons.check_circle, size: 20, color: forest),
+                    Icon(
+                      Icons.check_circle,
+                      size: 20,
+                      color: context.colors.primary,
+                    ),
                   ],
                 ),
               ),
@@ -80,10 +91,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 onPressed: () => ref.read(appProvider.notifier).onboard(goal),
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Your pace. Your progress. Always offline.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: muted),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -100,7 +114,7 @@ class _WelcomeArt extends StatelessWidget {
     child: Container(
       height: 188,
       decoration: BoxDecoration(
-        color: sage,
+        color: context.colors.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(28),
       ),
       child: Stack(
@@ -111,10 +125,10 @@ class _WelcomeArt extends StatelessWidget {
             top: 25,
             child: Transform.rotate(
               angle: 0.3,
-              child: const Icon(
+              child: Icon(
                 Icons.eco_outlined,
                 size: 90,
-                color: Color(0xFFCBD6BD),
+                color: context.colors.primary.withValues(alpha: 0.15),
               ),
             ),
           ),
@@ -124,7 +138,7 @@ class _WelcomeArt extends StatelessWidget {
               width: 210,
               height: 130,
               decoration: BoxDecoration(
-                color: const Color(0xFFD5DFC8),
+                color: context.colors.primaryContainer,
                 borderRadius: BorderRadius.circular(18),
               ),
             ),
@@ -136,10 +150,10 @@ class _WelcomeArt extends StatelessWidget {
               height: 130,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: forest,
+                color: context.colors.primary,
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: const FittedBox(
+              child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Column(
@@ -151,23 +165,27 @@ class _WelcomeArt extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Fraunces',
                         fontSize: 27,
-                        color: paper,
+                        color: context.colors.onPrimary,
                       ),
                     ),
                     SizedBox(height: 8),
                     Text(
                       'the beginning',
-                      style: TextStyle(color: Color(0xFFD5DFC8)),
+                      style: TextStyle(color: context.colors.onPrimary),
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          const Positioned(
+          Positioned(
             left: 22,
             bottom: 18,
-            child: Icon(Icons.auto_awesome, size: 22, color: forest),
+            child: Icon(
+              Icons.auto_awesome,
+              size: 22,
+              color: context.colors.primary,
+            ),
           ),
         ],
       ),

@@ -107,19 +107,39 @@ class Word {
   String get display => article == null ? german : '$article $german';
 }
 
+enum AppThemeMode { system, light, dark }
+
 class UserPreferences {
   final int dailyGoal;
   final bool onboarded;
   final bool reminders;
   final int reminderHour;
   final int reminderMinute;
+  final AppThemeMode themeMode;
   const UserPreferences({
     this.dailyGoal = 3,
     this.onboarded = false,
     this.reminders = false,
     this.reminderHour = 9,
     this.reminderMinute = 0,
+    this.themeMode = AppThemeMode.system,
   });
+
+  UserPreferences copyWith({
+    int? dailyGoal,
+    bool? onboarded,
+    bool? reminders,
+    int? reminderHour,
+    int? reminderMinute,
+    AppThemeMode? themeMode,
+  }) => UserPreferences(
+    dailyGoal: dailyGoal ?? this.dailyGoal,
+    onboarded: onboarded ?? this.onboarded,
+    reminders: reminders ?? this.reminders,
+    reminderHour: reminderHour ?? this.reminderHour,
+    reminderMinute: reminderMinute ?? this.reminderMinute,
+    themeMode: themeMode ?? this.themeMode,
+  );
 }
 
 class DayAssignment {

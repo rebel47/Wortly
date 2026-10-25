@@ -8,9 +8,9 @@ Development delivery; beta approval has **not** been granted.
 |---|---|
 | SDK | Flutter 3.47.8 stable / Dart 3.13.7 installed separately |
 | Drift code generation | Passed; generated source included |
-| Dart formatting | 28 files; no pending formatting changes |
+| Dart formatting | 29 files; no pending formatting changes |
 | Static analysis | Passed; no issues |
-| Flutter automated tests | 41 passed in the final full run |
+| Flutter automated tests | 51 passed after the focused lesson update |
 | Content import validation | 390 structurally valid draft records, 780 example pairs |
 | Python validator tests | 7 passed |
 | Beta corpus/editorial gate | Correctly rejected incomplete corpus and missing human approval |
@@ -20,8 +20,26 @@ Development delivery; beta approval has **not** been granted.
 | Native Android smoke test | Passed on API 35 with airplane mode on, Wi-Fi and mobile data off |
 | Real Android process restart | Passed: force-stop/relaunch retained the exact assignment, goal, one partial completion and zero premature streak awards; reopened on the next word |
 
+The appearance update removes the Today footer and adds persisted System, Light
+and Dark themes. Static analysis and formatting pass. Tests cover switching in
+Settings, runtime device appearance changes, preference persistence after a
+file-backed reopen, and upgrades from both schema v1 and v2 to v3 without losing
+history. Light and dark previews for onboarding, Today, Progress, Settings,
+weekly questions and incorrect-answer feedback were generated and inspected.
+The Android build/device checks recorded below predate this appearance update.
+
+The Today redesign adds an always-visible lesson entry button and a full-screen
+reader. Its word cards use the available height, keep the learning action fixed,
+and support swipe and arrow navigation. Tests verify browsing does not learn a
+word, one- and five-word lessons, continuing at the next unlearned word, completion
+returning to Today, safe review, midnight handling, touch-target labels, and visible
+actions at 200% text on 320-pixel screens in both themes. Updated Today and reader
+previews were inspected in light and dark mode. The native integration script now
+opens the reader explicitly; native build/device checks have not been rerun for
+these UI updates.
+
 The test suite uses real Drift/SQLite databases, including file-backed close/reopen
-tests and a schema v1→v2 migration preserving preferences, lessons, learned words,
+tests and migrations from schema v1 and v2 to v3 preserving preferences, lessons, learned words,
 activity and scores. Calendar tests use Europe/Berlin DST transitions and a shared
 instant viewed in Berlin and Los Angeles. UI tests exercise onboarding, actual
 completion taps, Sunday scoring, settings, empty progress, 320-pixel screens at

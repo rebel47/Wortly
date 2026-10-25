@@ -85,6 +85,18 @@ class $PreferenceRowsTable extends PreferenceRows
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _themeModeMeta = const VerificationMeta(
+    'themeMode',
+  );
+  @override
+  late final GeneratedColumn<String> themeMode = GeneratedColumn<String>(
+    'theme_mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('system'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -93,6 +105,7 @@ class $PreferenceRowsTable extends PreferenceRows
     reminders,
     reminderHour,
     reminderMinute,
+    themeMode,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -145,6 +158,12 @@ class $PreferenceRowsTable extends PreferenceRows
         ),
       );
     }
+    if (data.containsKey('theme_mode')) {
+      context.handle(
+        _themeModeMeta,
+        themeMode.isAcceptableOrUnknown(data['theme_mode']!, _themeModeMeta),
+      );
+    }
     return context;
   }
 
@@ -178,6 +197,10 @@ class $PreferenceRowsTable extends PreferenceRows
         DriftSqlType.int,
         data['${effectivePrefix}reminder_minute'],
       )!,
+      themeMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}theme_mode'],
+      )!,
     );
   }
 
@@ -194,6 +217,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
   final bool reminders;
   final int reminderHour;
   final int reminderMinute;
+  final String themeMode;
   const PreferenceRow({
     required this.id,
     required this.dailyGoal,
@@ -201,6 +225,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
     required this.reminders,
     required this.reminderHour,
     required this.reminderMinute,
+    required this.themeMode,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -211,6 +236,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
     map['reminders'] = Variable<bool>(reminders);
     map['reminder_hour'] = Variable<int>(reminderHour);
     map['reminder_minute'] = Variable<int>(reminderMinute);
+    map['theme_mode'] = Variable<String>(themeMode);
     return map;
   }
 
@@ -222,6 +248,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
       reminders: Value(reminders),
       reminderHour: Value(reminderHour),
       reminderMinute: Value(reminderMinute),
+      themeMode: Value(themeMode),
     );
   }
 
@@ -237,6 +264,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
       reminders: serializer.fromJson<bool>(json['reminders']),
       reminderHour: serializer.fromJson<int>(json['reminderHour']),
       reminderMinute: serializer.fromJson<int>(json['reminderMinute']),
+      themeMode: serializer.fromJson<String>(json['themeMode']),
     );
   }
   @override
@@ -249,6 +277,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
       'reminders': serializer.toJson<bool>(reminders),
       'reminderHour': serializer.toJson<int>(reminderHour),
       'reminderMinute': serializer.toJson<int>(reminderMinute),
+      'themeMode': serializer.toJson<String>(themeMode),
     };
   }
 
@@ -259,6 +288,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
     bool? reminders,
     int? reminderHour,
     int? reminderMinute,
+    String? themeMode,
   }) => PreferenceRow(
     id: id ?? this.id,
     dailyGoal: dailyGoal ?? this.dailyGoal,
@@ -266,6 +296,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
     reminders: reminders ?? this.reminders,
     reminderHour: reminderHour ?? this.reminderHour,
     reminderMinute: reminderMinute ?? this.reminderMinute,
+    themeMode: themeMode ?? this.themeMode,
   );
   PreferenceRow copyWithCompanion(PreferenceRowsCompanion data) {
     return PreferenceRow(
@@ -279,6 +310,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
       reminderMinute: data.reminderMinute.present
           ? data.reminderMinute.value
           : this.reminderMinute,
+      themeMode: data.themeMode.present ? data.themeMode.value : this.themeMode,
     );
   }
 
@@ -290,7 +322,8 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
           ..write('onboarded: $onboarded, ')
           ..write('reminders: $reminders, ')
           ..write('reminderHour: $reminderHour, ')
-          ..write('reminderMinute: $reminderMinute')
+          ..write('reminderMinute: $reminderMinute, ')
+          ..write('themeMode: $themeMode')
           ..write(')'))
         .toString();
   }
@@ -303,6 +336,7 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
     reminders,
     reminderHour,
     reminderMinute,
+    themeMode,
   );
   @override
   bool operator ==(Object other) =>
@@ -313,7 +347,8 @@ class PreferenceRow extends DataClass implements Insertable<PreferenceRow> {
           other.onboarded == this.onboarded &&
           other.reminders == this.reminders &&
           other.reminderHour == this.reminderHour &&
-          other.reminderMinute == this.reminderMinute);
+          other.reminderMinute == this.reminderMinute &&
+          other.themeMode == this.themeMode);
 }
 
 class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
@@ -323,6 +358,7 @@ class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
   final Value<bool> reminders;
   final Value<int> reminderHour;
   final Value<int> reminderMinute;
+  final Value<String> themeMode;
   const PreferenceRowsCompanion({
     this.id = const Value.absent(),
     this.dailyGoal = const Value.absent(),
@@ -330,6 +366,7 @@ class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
     this.reminders = const Value.absent(),
     this.reminderHour = const Value.absent(),
     this.reminderMinute = const Value.absent(),
+    this.themeMode = const Value.absent(),
   });
   PreferenceRowsCompanion.insert({
     this.id = const Value.absent(),
@@ -338,6 +375,7 @@ class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
     this.reminders = const Value.absent(),
     this.reminderHour = const Value.absent(),
     this.reminderMinute = const Value.absent(),
+    this.themeMode = const Value.absent(),
   });
   static Insertable<PreferenceRow> custom({
     Expression<int>? id,
@@ -346,6 +384,7 @@ class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
     Expression<bool>? reminders,
     Expression<int>? reminderHour,
     Expression<int>? reminderMinute,
+    Expression<String>? themeMode,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -354,6 +393,7 @@ class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
       if (reminders != null) 'reminders': reminders,
       if (reminderHour != null) 'reminder_hour': reminderHour,
       if (reminderMinute != null) 'reminder_minute': reminderMinute,
+      if (themeMode != null) 'theme_mode': themeMode,
     });
   }
 
@@ -364,6 +404,7 @@ class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
     Value<bool>? reminders,
     Value<int>? reminderHour,
     Value<int>? reminderMinute,
+    Value<String>? themeMode,
   }) {
     return PreferenceRowsCompanion(
       id: id ?? this.id,
@@ -372,6 +413,7 @@ class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
       reminders: reminders ?? this.reminders,
       reminderHour: reminderHour ?? this.reminderHour,
       reminderMinute: reminderMinute ?? this.reminderMinute,
+      themeMode: themeMode ?? this.themeMode,
     );
   }
 
@@ -396,6 +438,9 @@ class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
     if (reminderMinute.present) {
       map['reminder_minute'] = Variable<int>(reminderMinute.value);
     }
+    if (themeMode.present) {
+      map['theme_mode'] = Variable<String>(themeMode.value);
+    }
     return map;
   }
 
@@ -407,7 +452,8 @@ class PreferenceRowsCompanion extends UpdateCompanion<PreferenceRow> {
           ..write('onboarded: $onboarded, ')
           ..write('reminders: $reminders, ')
           ..write('reminderHour: $reminderHour, ')
-          ..write('reminderMinute: $reminderMinute')
+          ..write('reminderMinute: $reminderMinute, ')
+          ..write('themeMode: $themeMode')
           ..write(')'))
         .toString();
   }
@@ -1698,6 +1744,7 @@ typedef $$PreferenceRowsTableCreateCompanionBuilder =
       Value<bool> reminders,
       Value<int> reminderHour,
       Value<int> reminderMinute,
+      Value<String> themeMode,
     });
 typedef $$PreferenceRowsTableUpdateCompanionBuilder =
     PreferenceRowsCompanion Function({
@@ -1707,6 +1754,7 @@ typedef $$PreferenceRowsTableUpdateCompanionBuilder =
       Value<bool> reminders,
       Value<int> reminderHour,
       Value<int> reminderMinute,
+      Value<String> themeMode,
     });
 
 class $$PreferenceRowsTableFilterComposer
@@ -1745,6 +1793,11 @@ class $$PreferenceRowsTableFilterComposer
 
   ColumnFilters<int> get reminderMinute => $composableBuilder(
     column: $table.reminderMinute,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get themeMode => $composableBuilder(
+    column: $table.themeMode,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1787,6 +1840,11 @@ class $$PreferenceRowsTableOrderingComposer
     column: $table.reminderMinute,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get themeMode => $composableBuilder(
+    column: $table.themeMode,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$PreferenceRowsTableAnnotationComposer
@@ -1819,6 +1877,9 @@ class $$PreferenceRowsTableAnnotationComposer
     column: $table.reminderMinute,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get themeMode =>
+      $composableBuilder(column: $table.themeMode, builder: (column) => column);
 }
 
 class $$PreferenceRowsTableTableManager
@@ -1860,6 +1921,7 @@ class $$PreferenceRowsTableTableManager
                 Value<bool> reminders = const Value.absent(),
                 Value<int> reminderHour = const Value.absent(),
                 Value<int> reminderMinute = const Value.absent(),
+                Value<String> themeMode = const Value.absent(),
               }) => PreferenceRowsCompanion(
                 id: id,
                 dailyGoal: dailyGoal,
@@ -1867,6 +1929,7 @@ class $$PreferenceRowsTableTableManager
                 reminders: reminders,
                 reminderHour: reminderHour,
                 reminderMinute: reminderMinute,
+                themeMode: themeMode,
               ),
           createCompanionCallback:
               ({
@@ -1876,6 +1939,7 @@ class $$PreferenceRowsTableTableManager
                 Value<bool> reminders = const Value.absent(),
                 Value<int> reminderHour = const Value.absent(),
                 Value<int> reminderMinute = const Value.absent(),
+                Value<String> themeMode = const Value.absent(),
               }) => PreferenceRowsCompanion.insert(
                 id: id,
                 dailyGoal: dailyGoal,
@@ -1883,6 +1947,7 @@ class $$PreferenceRowsTableTableManager
                 reminders: reminders,
                 reminderHour: reminderHour,
                 reminderMinute: reminderMinute,
+                themeMode: themeMode,
               ),
           withReferenceMapper: (p0) => p0
               .map(

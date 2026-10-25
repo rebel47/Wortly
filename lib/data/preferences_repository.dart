@@ -17,6 +17,10 @@ class PreferencesRepository {
       reminders: row.reminders,
       reminderHour: row.reminderHour,
       reminderMinute: row.reminderMinute,
+      themeMode: AppThemeMode.values.firstWhere(
+        (mode) => mode.name == row.themeMode,
+        orElse: () => AppThemeMode.system,
+      ),
     );
   }
 
@@ -38,6 +42,7 @@ class PreferencesRepository {
             reminders: Value(p.reminders),
             reminderHour: Value(p.reminderHour),
             reminderMinute: Value(p.reminderMinute),
+            themeMode: Value(p.themeMode.name),
           ),
         );
   }

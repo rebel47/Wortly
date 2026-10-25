@@ -51,9 +51,17 @@ the installed mobile app uses on-device storage and bundled assets.
 
 ## Behavior
 
+- Settings offers System, Light and Dark appearance. System follows the device;
+  an explicit choice is saved locally and restored on restart.
 - Onboarding confirms English and offers 1, 3 or 5 daily words, defaulting to 3,
-  then opens today's lesson. Cards have grammatical type, article/plural for
-  nouns, English meanings and two translated examples.
+  then opens Today. A fixed learning button opens a full-screen lesson with
+  swipeable cards and previous/next controls. The word and examples get the
+  available screen space; the learning action stays fixed below the card.
+  Cards have grammatical type, article/plural for nouns, English meanings and
+  two translated examples. Long content and large text scroll inside the card.
+- Leaving a lesson preserves each learned word. Continue learning starts on the
+  next unlearned word; completing the lesson returns to Today. Swiping only
+  browses, and completed lessons can be revisited without changing progress.
 - Each civil date has one transactional assignment and a goal snapshot. Oldest
   unfinished words carry forward first; remaining places use unseen words in
   usefulness order. Goal changes affect the next newly assigned date.
@@ -87,7 +95,7 @@ the installed mobile app uses on-device storage and bundled assets.
 
 ```text
 lib/domain/models.dart               Typed records, civil dates, injected clock
-lib/data/database.dart               Drift schema v2; additive v1→v2 migration
+lib/data/database.dart               Drift schema v3; additive migrations preserve history
 lib/data/vocabulary_repository.dart   Versioned bundled content
 lib/data/preferences_repository.dart Settings and onboarding
 lib/data/learning_repository.dart    Lessons, completions, activity and streaks
@@ -106,7 +114,8 @@ integration_test/                   Native SQLite reopen smoke test
 SQLite stores preferences/onboarding, daily assignments, first-learned dates,
 earned activity dates, quiz sessions/scores and content import versions. Drift
 manages its file in the platform's application documents directory. No migration clears progress.
-Schema v2 adds import metadata without changing history. For future schema
+Schema v2 adds import metadata; v3 adds the saved theme preference. Both preserve
+history. For future schema
 changes, increment `schemaVersion`, write an additive/data-preserving migration
 and extend the migration test. Released word IDs may never disappear or be
 reassigned. Validate content updates against the last shipped bundle:

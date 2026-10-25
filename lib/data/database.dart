@@ -8,6 +8,7 @@ class PreferenceRows extends Table {
   BoolColumn get reminders => boolean().withDefault(const Constant(false))();
   IntColumn get reminderHour => integer().withDefault(const Constant(9))();
   IntColumn get reminderMinute => integer().withDefault(const Constant(0))();
+  TextColumn get themeMode => text().withDefault(const Constant('system'))();
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -65,12 +66,13 @@ class ContentRows extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
     onUpgrade: (m, from, to) async {
       if (from < 2) await m.createTable(contentRows);
+      if (from < 3) await m.addColumn(preferenceRows, preferenceRows.themeMode);
     },
     beforeOpen: (_) async {
       await customStatement('PRAGMA foreign_keys = ON');

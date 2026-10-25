@@ -1,29 +1,41 @@
 import 'package:flutter/material.dart';
 
-const forest = Color(0xFF244C3D);
-const ink = Color(0xFF263C32);
-const muted = Color(0xFF647267);
-const paper = Color(0xFFF8F7F1);
-const sage = Color(0xFFE9EDE1);
-const line = Color(0xFFDFE3D8);
-const amber = Color(0xFF915425);
+extension WortlyColorContext on BuildContext {
+  ColorScheme get colors => Theme.of(this).colorScheme;
+}
 
-ThemeData wortlyTheme() {
+ThemeData wortlyTheme({Brightness brightness = Brightness.light}) {
+  final dark = brightness == Brightness.dark;
   final colors = ColorScheme.fromSeed(
-    seedColor: forest,
-    brightness: Brightness.light,
-    primary: forest,
-    surface: paper,
-    onSurface: ink,
-    secondary: const Color(0xFF637A50),
-    error: const Color(0xFF9B382D),
+    seedColor: const Color(0xFF244C3D),
+    brightness: brightness,
+    primary: dark ? const Color(0xFFB4D2A4) : const Color(0xFF244C3D),
+    onPrimary: dark ? const Color(0xFF19351E) : Colors.white,
+    surface: dark ? const Color(0xFF141C18) : const Color(0xFFF8F7F1),
+    onSurface: dark ? const Color(0xFFE7ECE2) : const Color(0xFF263C32),
+    onSurfaceVariant: dark ? const Color(0xFFB4BFB0) : const Color(0xFF647267),
+    surfaceContainerLow: dark ? const Color(0xFF1E2821) : Colors.white,
+    surfaceContainerHigh: dark
+        ? const Color(0xFF2C382E)
+        : const Color(0xFFE9EDE1),
+    outlineVariant: dark ? const Color(0xFF414E41) : const Color(0xFFDFE3D8),
+    secondary: dark ? const Color(0xFFA6B99A) : const Color(0xFF637A50),
+    tertiary: dark ? const Color(0xFFE4B381) : const Color(0xFF915425),
+    tertiaryContainer: dark ? const Color(0xFF483324) : const Color(0xFFF8EBDF),
+    error: dark ? const Color(0xFFFFB4AB) : const Color(0xFF9B382D),
   );
+  final forest = colors.primary;
+  final ink = colors.onSurface;
+  final muted = colors.onSurfaceVariant;
+  final paper = colors.surface;
+  final sage = colors.surfaceContainerHigh;
+  final line = colors.outlineVariant;
   return ThemeData(
     useMaterial3: true,
     colorScheme: colors,
     scaffoldBackgroundColor: paper,
     fontFamily: 'DMSans',
-    textTheme: const TextTheme(
+    textTheme: TextTheme(
       displaySmall: TextStyle(
         fontFamily: 'Fraunces',
         fontSize: 38,
@@ -56,7 +68,7 @@ ThemeData wortlyTheme() {
       bodyMedium: TextStyle(fontSize: 14, height: 1.5, color: muted),
       labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
     ),
-    appBarTheme: const AppBarTheme(
+    appBarTheme: AppBarTheme(
       backgroundColor: paper,
       foregroundColor: ink,
       surfaceTintColor: Colors.transparent,
@@ -65,7 +77,7 @@ ThemeData wortlyTheme() {
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         backgroundColor: forest,
-        foregroundColor: Colors.white,
+        foregroundColor: colors.onPrimary,
         minimumSize: const Size(48, 54),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -74,7 +86,7 @@ ThemeData wortlyTheme() {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(48, 50),
-        side: const BorderSide(color: line),
+        side: BorderSide(color: line),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     ),
@@ -83,16 +95,16 @@ ThemeData wortlyTheme() {
       surfaceTintColor: Colors.transparent,
       indicatorColor: sage,
       labelTextStyle: WidgetStateProperty.all(
-        const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: forest,
-        ),
+        TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: forest),
       ),
     ),
-    dividerTheme: const DividerThemeData(color: line, thickness: 1),
+    dividerTheme: DividerThemeData(color: line, thickness: 1),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: forest,
+      contentTextStyle: TextStyle(
+        color: colors.onPrimary,
+        fontFamily: 'DMSans',
+      ),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ),

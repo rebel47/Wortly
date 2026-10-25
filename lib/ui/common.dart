@@ -12,20 +12,24 @@ class Brand extends StatelessWidget {
         width: 34,
         height: 34,
         decoration: BoxDecoration(
-          color: forest,
+          color: context.colors.primary,
           borderRadius: BorderRadius.circular(11),
         ),
-        child: const Icon(Icons.eco_outlined, color: paper, size: 23),
+        child: Icon(
+          Icons.eco_outlined,
+          color: context.colors.onPrimary,
+          size: 23,
+        ),
       ),
       const SizedBox(width: 10),
-      const Text(
+      Text(
         'wortly',
         textScaler: TextScaler.noScaling,
         style: TextStyle(
           fontFamily: 'Fraunces',
           fontSize: 27,
           fontWeight: FontWeight.w600,
-          color: forest,
+          color: context.colors.primary,
           letterSpacing: -1,
         ),
       ),
@@ -35,13 +39,13 @@ class Brand extends StatelessWidget {
 
 class Eyebrow extends StatelessWidget {
   final String text;
-  final Color color;
-  const Eyebrow(this.text, {super.key, this.color = muted});
+  final Color? color;
+  const Eyebrow(this.text, {super.key, this.color});
   @override
   Widget build(BuildContext context) => Text(
     text.toUpperCase(),
     style: TextStyle(
-      color: color,
+      color: color ?? context.colors.onSurfaceVariant,
       fontSize: 11,
       letterSpacing: 1.8,
       fontWeight: FontWeight.w700,
@@ -51,20 +55,20 @@ class Eyebrow extends StatelessWidget {
 
 class Panel extends StatelessWidget {
   final Widget child;
-  final Color color;
+  final Color? color;
   final EdgeInsets padding;
   const Panel({
     super.key,
     required this.child,
-    this.color = Colors.white,
+    this.color,
     this.padding = const EdgeInsets.all(24),
   });
   @override
   Widget build(BuildContext context) => Container(
     decoration: BoxDecoration(
-      color: color,
+      color: color ?? context.colors.surfaceContainerLow,
       borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: line),
+      border: Border.all(color: context.colors.outlineVariant),
     ),
     child: Material(
       type: MaterialType.transparency,
@@ -100,9 +104,15 @@ class GoalPicker extends StatelessWidget {
                     horizontal: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: value == goal ? forest : Colors.white,
+                    color: value == goal
+                        ? context.colors.primary
+                        : context.colors.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: value == goal ? forest : line),
+                    border: Border.all(
+                      color: value == goal
+                          ? context.colors.primary
+                          : context.colors.outlineVariant,
+                    ),
                   ),
                   child: ExcludeSemantics(
                     child: Column(
@@ -112,7 +122,9 @@ class GoalPicker extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Fraunces',
                             fontSize: 30,
-                            color: value == goal ? Colors.white : forest,
+                            color: value == goal
+                                ? context.colors.onPrimary
+                                : context.colors.primary,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -121,7 +133,9 @@ class GoalPicker extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 11,
-                            color: value == goal ? Colors.white : muted,
+                            color: value == goal
+                                ? context.colors.onPrimary
+                                : context.colors.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -130,7 +144,9 @@ class GoalPicker extends StatelessWidget {
                               ? Icons.check_circle
                               : Icons.circle_outlined,
                           size: 18,
-                          color: value == goal ? const Color(0xFFCCDDB6) : line,
+                          color: value == goal
+                              ? context.colors.onPrimary
+                              : context.colors.outlineVariant,
                         ),
                       ],
                     ),
@@ -216,14 +232,17 @@ class EmptyMoment extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => Panel(
-    color: sage,
+    color: context.colors.surfaceContainerHigh,
     child: Column(
       children: [
         const SizedBox(height: 20),
         Container(
           padding: const EdgeInsets.all(22),
-          decoration: const BoxDecoration(color: paper, shape: BoxShape.circle),
-          child: Icon(icon, color: forest, size: 42),
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: context.colors.primary, size: 42),
         ),
         const SizedBox(height: 24),
         Text(

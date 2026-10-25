@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wortly/app.dart';
 import 'package:wortly/app_controller.dart';
+import 'package:wortly/domain/models.dart';
 
 import 'support.dart';
 
@@ -24,69 +25,97 @@ void main() {
       )..addFont(rootBundle.load(entry.value))).load();
     }
   });
-  testWidgets('render actual bundled fonts for visual review', (tester) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final h = Harness(date: '2026-10-25T09:00:00');
-    addTearDown(h.db.close);
-    final key = GlobalKey();
-    final container = ProviderContainer(
-      overrides: [servicesProvider.overrideWithValue(h.services())],
-    );
-    addTearDown(container.dispose);
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: RepaintBoundary(key: key, child: const WortlyApp()),
-      ),
-    );
-    await tester.pumpAndSettle();
-    Future<void> capture(String name) async {
-      final boundary =
-          key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-      await tester.runAsync(() async {
-        final image = await boundary.toImage(pixelRatio: 2);
-        final bytes = (await image.toByteData(format: ui.ImageByteFormat.png))!;
-        await Directory('output/previews').create(recursive: true);
-        await File('output/previews/$name.png')
-            .writeAsBytes(bytes.buffer.asUint8List());
-        image.dispose();
-      });
-      debugPrint('Captured $name');
-    }
+  for (final mode in [AppThemeMode.light, AppThemeMode.dark]) {
+    testWidgets('render ${mode.name} theme with bundled fonts', (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final h = Harness(date: '2026-10-25T09:00:00');
+      addTearDown(h.db.close);
+      await h.preferences.save(UserPreferences(themeMode: mode));
+      final key = GlobalKey();
+      final container = ProviderContainer(
+        overrides: [servicesProvider.overrideWithValue(h.services())],
+      );
+      addTearDown(container.dispose);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: RepaintBoundary(key: key, child: const WortlyApp()),
+        ),
+      );
+      await tester.pumpAndSettle();
+      Future<void> capture(String name) async {
+        final boundary =
+            key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+        await tester.runAsync(() async {
+          final image = await boundary.toImage(pixelRatio: 2);
+          final bytes = (await image.toByteData(
+            format: ui.ImageByteFormat.png,
+          ))!;
+          await Directory('output/previews').create(recursive: true);
+          await File(
+            'output/previews/${mode == AppThemeMode.dark ? 'dark-' : ''}$name.png',
+          ).writeAsBytes(bytes.buffer.asUint8List());
+          image.dispose();
+        });
+        debugPrint('Captured $name');
+      }
 
-    await capture('01-onboarding');
-    await tester.scrollUntilVisible(find.text('Let’s begin'), 200);
-    await tester.tap(find.text('Let’s begin'));
-    await tester.pumpAndSettle();
-    await capture('02-today');
-    await tester.tap(find.text('Progress'));
-    await tester.pumpAndSettle();
-    await capture('03-progress');
-    await tester.tap(find.byTooltip('Settings'));
-    await tester.pumpAndSettle();
-    await capture('04-settings');
-    await tester.pageBack();
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Today'));
-    await tester.pumpAndSettle();
-    for (var i = 0; i < 3; i++) {
-      final button = find.text('I’ve learned this word').first;
-      await tester.ensureVisible(button);
+      await capture('01-onboarding');
+      await tester.scrollUntilVisible(find.text('Let’s begin'), 200);
+      await tester.tap(find.text('Let’s begin'));
       await tester.pumpAndSettle();
-      await tester.tap(button);
+      await capture('02-today');
+      await tester.tap(find.text("Learn today's words"));
       await tester.pumpAndSettle();
-    }
-    await tester.tap(find.text('Test'));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Start weekly test'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Start weekly test'));
-    await tester.pumpAndSettle();
-    await capture('05-quiz');
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox());
-  });
+      await capture('02-lesson');
+      await tester.drag(find.byType(PageView), const Offset(-320, 0));
+      await tester.pumpAndSettle();
+      await capture('02-lesson-next');
+      await tester.tap(find.byTooltip('Close lesson'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Progress'));
+      await tester.pumpAndSettle();
+      await capture('03-progress');
+      await tester.tap(find.byTooltip('Settings'));
+      await tester.pumpAndSettle();
+      await capture('04-settings');
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Today'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text("Learn today's words"));
+      await tester.pumpAndSettle();
+      for (var i = 0; i < 3; i++) {
+        final button = find.text('I’ve learned this word').first;
+        await tester.ensureVisible(button);
+        await tester.pumpAndSettle();
+        await tester.tap(button);
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.text('Test'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Start weekly test'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Start weekly test'));
+      await tester.pumpAndSettle();
+      await capture('05-quiz');
+      final quiz = (await h.quizzes.session())!;
+      final incorrect =
+          quiz.current.choices[(quiz.current.correctIndex + 1) %
+              quiz.current.choices.length];
+      await tester.ensureVisible(find.text(incorrect));
+      await tester.tap(find.text(incorrect));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('A little more practice, a little more progress.'),
+        150,
+      );
+      await capture('06-feedback');
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
 }
