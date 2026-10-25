@@ -1,0 +1,44 @@
+name: Wortly checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release_content:
+        description: Enforce full corpus and documented German editorial approval
+        type: boolean
+        default: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.8'
+          channel: stable
+          cache: true
+      - run: python tool/validate_content.py
+      - run: python -m unittest discover -s tool -p test_validator.py -v
+      - run: flutter pub get
+      - run: dart run build_runner build
+      - run: dart format --output=none --set-exit-if-changed lib test integration_test
+      - run: flutter analyze
+      - run: flutter test --reporter expanded
+      - name: Beta content release gate
+        if: inputs.release_content == true
+        run: python tool/validate_content.py --release
+      - run: flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wortly-development-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wortly-previews
+          path: output/previews/
